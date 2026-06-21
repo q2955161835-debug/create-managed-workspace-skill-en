@@ -1,4 +1,4 @@
-"""Create a standard managed workspace."""
+"""Create a managed workspace."""
 
 from __future__ import annotations
 
@@ -8,8 +8,9 @@ from datetime import datetime
 from pathlib import Path
 
 
-ROOT_DIRS = ["docs", "skills", "tasks", "output", "try"]
-ROOT_KEEP_DIRS = ["skills", "output", "try"]
+ROOT_DIRS = ["docs", "tasks", "output", "try"]
+ROOT_KEEP_DIRS = ["output", "try"]
+WORKSPACE_KINDS = ("multi-task", "specialized")
 
 
 def now_minute() -> str:
@@ -38,7 +39,12 @@ def maybe_git_init(root: Path) -> None:
     subprocess.run(["git", "commit", "-m", "chore: baseline managed workspace"], cwd=root, check=True)
 
 
-def workspace_agents(name: str) -> str:
+def workspace_agents(name: str, workspace_kind: str) -> str:
+    skills_rule = (
+        "- Root `skills/` stores commonly used skills for this specialized task-type workspace. It starts empty.\n"
+        if workspace_kind == "specialized"
+        else "- General multi-task workspaces do not create root `skills/` by default. Add it only when converting to a specialized task-type workspace.\n"
+    )
     return f"""# {name} Workspace Rules
 
 ## Task Ownership
@@ -55,7 +61,7 @@ def workspace_agents(name: str) -> str:
 - `try/` stores test, debugging, and temporary validation files. Clearing it must not affect formal results.
 
 ## Workspace Directories
-- Root `skills/` stores commonly used workspace-specific skills later. It starts empty.
+{skills_rule.rstrip()}
 - Root `try/` is only for workspace-level one-off debugging and tests.
 - Root `output/` may keep historical deliverables. New task outputs should prefer `tasks/.../output/`.
 
@@ -70,15 +76,21 @@ def workspace_agents(name: str) -> str:
 """
 
 
-def create_workspace(root: Path, name: str, overwrite: bool, init_git: bool) -> Path:
+def create_workspace(root: Path, name: str, overwrite: bool, init_git: bool, workspace_kind: str) -> Path:
     root.mkdir(parents=True, exist_ok=True)
-    for folder in ROOT_DIRS:
+    root_dirs = list(ROOT_DIRS)
+    root_keep_dirs = list(ROOT_KEEP_DIRS)
+    if workspace_kind == "specialized":
+        root_dirs.append("skills")
+        root_keep_dirs.append("skills")
+
+    for folder in root_dirs:
         (root / folder).mkdir(parents=True, exist_ok=True)
-    for folder in ROOT_KEEP_DIRS:
+    for folder in root_keep_dirs:
         touch_keep(root / folder)
 
     stamp = now_minute()
-    write_file(root / "AGENTS.md", workspace_agents(name), overwrite)
+    write_file(root / "AGENTS.md", workspace_agents(name, workspace_kind), overwrite)
     write_file(
         root / ".gitignore",
         """.env
@@ -107,17 +119,20 @@ tasks/*/try/**
         f"""# Project Map
 
 ## Goal
-- `{name}` is a managed workspace for cross-session tasks, small projects, artifacts, rules, and reusable skills.
+- `{name}` is a managed workspace for cross-session tasks, small projects, artifacts, and rules.
 
 ## Directory Responsibilities
 - `AGENTS.md`: workspace rules.
 - `docs/task-index.md`: cross-session task index.
 - `docs/progress.md`: workspace-level progress summary.
 - `docs/project-map.md`: long-lived workspace information.
-- `skills/`: commonly used workspace-specific skills; empty at creation time.
+{"- `skills/`: common skills for a specialized task-type workspace; empty at creation time." if workspace_kind == "specialized" else "- General multi-task workspaces do not create `skills/` by default. Add it later only when converting to a specialized task-type workspace."}
 - `tasks/`: small project directories.
 - `output/`: historical or workspace-level deliverables.
 - `try/`: workspace-level test, debugging, and temporary validation files.
+
+## Workspace Kind
+- {workspace_kind}
 
 ## Environment Ledger
 - `.env`: real sensitive local configuration, ignored and never committed.
@@ -151,7 +166,7 @@ Use this file to answer: which cross-session tasks exist, where they are, what t
 
 ## {stamp} ~ {stamp}
 - Completed: created the standard managed workspace structure.
-- Added/modified/generated files and purpose: `AGENTS.md`, `.gitignore`, `.env.example`, `docs/`, `skills/`, `tasks/`, `output/`, `try/`.
+- Added/modified/generated files and purpose: `AGENTS.md`, `.gitignore`, `.env.example`, `docs/`, {"`skills/`, " if workspace_kind == "specialized" else ""}`tasks/`, `output/`, `try/`.
 - Errors: none.
 """,
         overwrite,
@@ -173,13 +188,25 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("path", help="Workspace root path to create")
     parser.add_argument("--name", help="Human-readable workspace name")
+    parser.add_argument(
+        "--workspace-kind",
+        choices=WORKSPACE_KINDS,
+        default="multi-task",
+        help="multi-task creates no root skills directory; specialized creates root skills directory",
+    )
+    parser.add_argument(
+        "--specialized",
+        action="store_true",
+        help="Shortcut for --workspace-kind specialized",
+    )
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing managed files")
     parser.add_argument("--init-git", action="store_true", help="Initialize Git and create a baseline commit if needed")
     args = parser.parse_args()
 
     root = Path(args.path).resolve()
     name = args.name or root.name
-    created = create_workspace(root, name, args.overwrite, args.init_git)
+    workspace_kind = "specialized" if args.specialized else args.workspace_kind
+    created = create_workspace(root, name, args.overwrite, args.init_git, workspace_kind)
     print(created)
 
 
