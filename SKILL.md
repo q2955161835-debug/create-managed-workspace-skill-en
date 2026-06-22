@@ -35,14 +35,16 @@ Create this root structure by default:
 |-- docs/
 |   |-- project-map.md
 |   |-- task-index.md
-|   `-- progress.md
+|   `-- progress/
+|       `-- YYYY-M-D.md
 |-- tasks/
 |   |-- README.md
 |   `-- YYYYMMDD-short-task-name/
 |       |-- README.md
 |       |-- docs/
 |       |   |-- project-map.md
-|       |   `-- progress.md
+|       |   `-- progress/
+|       |       `-- YYYY-M-D.md
 |       |-- input/
 |       |-- work/
 |       |-- output/
@@ -67,7 +69,7 @@ Rules:
 - Give every task directory its own `try/`; clearing a task `try/` must not affect formal results.
 - Put task context in `tasks/YYYYMMDD-slug/README.md`.
 - Put task long-lived structure and directory responsibilities in `tasks/YYYYMMDD-slug/docs/project-map.md`.
-- Put task progress in `tasks/YYYYMMDD-slug/docs/progress.md`.
+- Put task progress in `tasks/YYYYMMDD-slug/docs/progress/YYYY-M-D.md`, based on the record completion date.
 - Put task final deliverables in `tasks/YYYYMMDD-slug/output/`.
 
 ## Scripts

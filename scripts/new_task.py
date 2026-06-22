@@ -20,6 +20,11 @@ def today() -> str:
     return datetime.now().strftime("%Y%m%d")
 
 
+def today_progress_file() -> str:
+    now = datetime.now()
+    return f"{now.year}-{now.month}-{now.day}.md"
+
+
 def slugify(name: str) -> str:
     cleaned = re.sub(r"[\\/:*?\"<>|]+", "-", name.strip())
     cleaned = re.sub(r"\s+", "-", cleaned)
@@ -86,7 +91,7 @@ def create_task(workspace: Path, name: str, task_id: str | None, overwrite: bool
 ## Directory Responsibilities
 - `README.md`: goal, current status, key decisions, and next step.
 - `docs/project-map.md`: long-lived task information.
-- `docs/progress.md`: task-level progress.
+- `docs/progress/YYYY-M-D.md`: task-level progress according to the record completion date.
 - `input/`: input materials.
 - `work/`: intermediate files, drafts, and scripts.
 - `output/`: final deliverables.
@@ -98,12 +103,12 @@ def create_task(workspace: Path, name: str, task_id: str | None, overwrite: bool
         overwrite,
     )
     write_file(
-        task / "docs" / "progress.md",
+        task / "docs" / "progress" / today_progress_file(),
         f"""# Progress
 
 ## {stamp} ~ {stamp}
 - Completed: created the task directory skeleton.
-- Added/modified/generated files and purpose: `README.md`, `docs/project-map.md`, `docs/progress.md`, `input/`, `work/`, `output/`, `try/`.
+- Added/modified/generated files and purpose: `README.md`, `docs/project-map.md`, `docs/progress/`, `input/`, `work/`, `output/`, `try/`.
 - Errors: none.
 """,
         overwrite,

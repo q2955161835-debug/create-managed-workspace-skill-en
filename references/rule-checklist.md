@@ -9,7 +9,7 @@ Use this checklist before finishing workspace creation or editing generated rule
 - `.env.example` contains placeholders only and no real secrets.
 - `docs/project-map.md` records long-term workspace purpose and directory responsibilities.
 - `docs/task-index.md` exists for cross-session tasks.
-- `docs/progress.md` records workspace-level summaries.
+- `docs/progress/YYYY-M-D.md` records workspace-level summaries, one file per record completion date.
 - For `multi-task` workspaces, root `skills/` is absent by default.
 - For `specialized` task-type workspaces, root `skills/` exists and is empty except `.gitkeep` at creation unless the user asked for skill entrypoints.
 - `try/` exists and contains no required project result.
@@ -19,7 +19,7 @@ Use this checklist before finishing workspace creation or editing generated rule
 - Directory name uses `YYYYMMDD-short-task-name`.
 - `README.md` records goal, current status, key decisions, and next step.
 - `docs/project-map.md` records the task purpose, directory responsibilities, entry points, dependencies, and output flow.
-- `docs/progress.md` records minute-level time ranges.
+- `docs/progress/YYYY-M-D.md` records minute-level time ranges.
 - `input/` holds input material.
 - `work/` holds drafts, scripts, and intermediate files.
 - `output/` holds final deliverables.

@@ -37,14 +37,16 @@ By default, new workspaces use `multi-task` mode and do not include root `skills
 |-- docs/
 |   |-- project-map.md
 |   |-- task-index.md
-|   `-- progress.md
+|   `-- progress/
+|       `-- YYYY-M-D.md
 |-- tasks/
 |   |-- README.md
 |   `-- YYYYMMDD-short-task-name/
 |       |-- README.md
 |       |-- docs/
 |       |   |-- project-map.md
-|       |   `-- progress.md
+|       |   `-- progress/
+|       |       `-- YYYY-M-D.md
 |       |-- input/
 |       |-- work/
 |       |-- output/
@@ -66,7 +68,7 @@ A `specialized` task-type workspace additionally gets:
 - AGENTS.md defines agent operating rules.
 - docs/project-map.md defines long-term structure.
 - docs/task-index.md tracks cross-session tasks.
-- docs/progress.md stores workspace-level progress.
+- docs/progress/YYYY-M-D.md stores workspace-level progress by record completion date.
 - skills/ exists only for specialized task-type workspaces and stores reusable skills, wrappers, or external skill entrypoints.
 - tasks/ stores small project units.
 - Each task has its own docs and try/ sandbox.
