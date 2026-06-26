@@ -11,15 +11,16 @@ ROOT_FILES = [
     "AGENTS.md",
     ".gitignore",
     ".env.example",
-    "docs/project-map.md",
     "docs/task-index.md",
     "tasks/README.md",
 ]
 
 ROOT_DIRS = ["docs", "docs/progress", "tasks", "output", "try"]
+OBSOLETE_ROOT_FILES = ["docs/project-map.md"]
 TASK_PATHS = [
     "README.md",
     "docs/project-map.md",
+    "docs/acceptance-criteria.md",
     "docs/progress",
     "input",
     "work",
@@ -48,13 +49,16 @@ def validate(root: Path, workspace_kind: str) -> list[str]:
     for rel in ROOT_DIRS:
         if not (root / rel).is_dir():
             errors.append(f"Missing required directory: {rel}")
+    for rel in OBSOLETE_ROOT_FILES:
+        if (root / rel).exists():
+            errors.append(f"Deprecated root file still exists: {rel}; move its content into AGENTS.md")
     if effective_kind == "specialized" and not (root / "skills").is_dir():
         errors.append("Specialized task-type workspace is missing required directory: skills")
 
     agents = root / "AGENTS.md"
     if agents.exists():
         text = agents.read_text(encoding="utf-8", errors="replace")
-        phrases = ["Task Ownership", "try/", ".env.example"]
+        phrases = ["Task Ownership", "Task Directories", "Workspace Directories", "try/", ".env.example"]
         if effective_kind == "specialized":
             phrases.append("skills/")
         for phrase in phrases:

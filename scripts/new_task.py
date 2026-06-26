@@ -91,6 +91,7 @@ def create_task(workspace: Path, name: str, task_id: str | None, overwrite: bool
 ## Directory Responsibilities
 - `README.md`: goal, current status, key decisions, and next step.
 - `docs/project-map.md`: long-lived task information.
+- `docs/acceptance-criteria.md`: functional, interaction, test, and manual acceptance checklist.
 - `docs/progress/YYYY-M-D.md`: task-level progress according to the record completion date.
 - `input/`: input materials.
 - `work/`: intermediate files, drafts, and scripts.
@@ -103,12 +104,38 @@ def create_task(workspace: Path, name: str, task_id: str | None, overwrite: bool
         overwrite,
     )
     write_file(
+        task / "docs" / "acceptance-criteria.md",
+        """# Acceptance Criteria
+
+## Test Environment
+- To be filled: operating system, tools, dependency versions, input materials, and manual acceptance conditions.
+
+## Acceptance Steps
+| Step | Action | Expected Result | Evidence | Result Record |
+| --- | --- | --- | --- | --- |
+| 1 | To be filled | To be filled | Command, test, screenshot, log, file change, or manual confirmation | Not run |
+
+## Automated Verification
+- To be filled: repeatable commands; if no automated test exists, state why.
+
+## Manual Confirmation
+- To be filled: visual quality, click experience, real device checks, browser compatibility, or deliverable review.
+
+## Feedback / Issues
+- To be filled: failed items, blockers, user feedback, and follow-up handling.
+
+## Final Conclusion
+- To be filled: pass, fail, or partial pass with evidence.
+""",
+        overwrite,
+    )
+    write_file(
         task / "docs" / "progress" / today_progress_file(),
         f"""# Progress
 
 ## {stamp} ~ {stamp}
 - Completed: created the task directory skeleton.
-- Added/modified/generated files and purpose: `README.md`, `docs/project-map.md`, `docs/progress/`, `input/`, `work/`, `output/`, `try/`.
+- Added/modified/generated files and purpose: `README.md`, `docs/project-map.md`, `docs/acceptance-criteria.md`, `docs/progress/`, `input/`, `work/`, `output/`, `try/`.
 - Errors: none.
 """,
         overwrite,

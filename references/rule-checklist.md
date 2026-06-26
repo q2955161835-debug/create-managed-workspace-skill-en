@@ -4,10 +4,10 @@ Use this checklist before finishing workspace creation or editing generated rule
 
 ## Root
 
-- `AGENTS.md` describes task ownership, task folders, workspace kind, root `try/`, progress records, and environment ledgers.
+- `AGENTS.md` describes workspace purpose, directory responsibilities, task ownership, task folders, workspace kind, root `try/`, progress records, and environment ledgers.
+- Root `docs/project-map.md` is deprecated; do not create it. Move any root project-map content into `AGENTS.md`.
 - `.gitignore` ignores `.env`, caches, root `try/` contents, and task `try/` contents while preserving `.gitkeep`.
 - `.env.example` contains placeholders only and no real secrets.
-- `docs/project-map.md` records long-term workspace purpose and directory responsibilities.
 - `docs/task-index.md` exists for cross-session tasks.
 - `docs/progress/YYYY-M-D.md` records workspace-level summaries, one file per record completion date.
 - For `multi-task` workspaces, root `skills/` is absent by default.
@@ -19,6 +19,7 @@ Use this checklist before finishing workspace creation or editing generated rule
 - Directory name uses `YYYYMMDD-short-task-name`.
 - `README.md` records goal, current status, key decisions, and next step.
 - `docs/project-map.md` records the task purpose, directory responsibilities, entry points, dependencies, and output flow.
+- `docs/acceptance-criteria.md` records test environment, acceptance steps, expected results, evidence method, result record, feedback/issues, and final conclusion.
 - `docs/progress/YYYY-M-D.md` records minute-level time ranges.
 - `input/` holds input material.
 - `work/` holds drafts, scripts, and intermediate files.

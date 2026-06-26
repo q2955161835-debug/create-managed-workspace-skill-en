@@ -46,11 +46,16 @@ def maybe_git_init(root: Path) -> None:
 
 def workspace_agents(name: str, workspace_kind: str) -> str:
     skills_rule = (
-        "- Root `skills/` stores commonly used skills for this specialized task-type workspace. It starts empty.\n"
+        "- `skills/`: common skills, wrappers, or external entrypoints for this specialized task-type workspace. It starts with only `.gitkeep`.\n"
         if workspace_kind == "specialized"
-        else "- General multi-task workspaces do not create root `skills/` by default. Add it only when converting to a specialized task-type workspace.\n"
+        else "- `skills/`: general multi-task workspaces do not create this directory by default. Add it only when converting to a specialized task-type workspace and document its purpose here.\n"
     )
     return f"""# {name} Workspace Rules
+
+## Workspace Overview
+- `{name}` is a managed workspace for cross-session tasks, small projects, artifacts, and rules.
+- Workspace kind: `{workspace_kind}`.
+- Root `docs/project-map.md` is deprecated. Keep long-lived workspace information, directory responsibilities, core entry points, and operating rules in this file.
 
 ## Task Ownership
 - Before starting work that creates files, spans sessions, or leaves multiple artifacts, check `docs/task-index.md` for an existing task.
@@ -59,19 +64,25 @@ def workspace_agents(name: str, workspace_kind: str) -> str:
 - Do not register simple Q&A, one-off searches, or sessions that produce no files.
 
 ## Task Directories
-- Each task directory contains `README.md`, `docs/project-map.md`, `docs/progress/`, `input/`, `work/`, `output/`, and `try/`.
+- Each task directory contains `README.md`, `docs/project-map.md`, `docs/acceptance-criteria.md`, `docs/progress/`, `input/`, `work/`, `output/`, and `try/`.
 - `README.md` records the goal, current status, key decisions, and next step.
 - `docs/project-map.md` records long-lived task information, directory responsibilities, entry points, dependencies, and data flow.
+- `docs/acceptance-criteria.md` records functional, interaction, test, manual acceptance, result, and final conclusion checks.
 - `docs/progress/YYYY-M-D.md` records task-level progress according to the record completion date.
 - `try/` stores test, debugging, and temporary validation files. Clearing it must not affect formal results.
 
 ## Workspace Directories
+- `AGENTS.md`: workspace rules, directory responsibilities, long-lived maintenance information, and agent operating constraints.
+- `.env.example`: example environment ledger with variable names, placeholder values, and notes only.
+- `docs/task-index.md`: cross-session task index.
+- `docs/progress/`: workspace-level progress summaries, one file per completion date.
 {skills_rule.rstrip()}
-- Root `try/` is only for workspace-level one-off debugging and tests.
-- Root `output/` may keep historical deliverables. New task outputs should prefer `tasks/.../output/`.
+- `tasks/`: small project directories.
+- `output/`: historical or workspace-level deliverables. New task outputs should prefer `tasks/.../output/`.
+- `try/`: workspace-level one-off debugging and tests.
 
 ## Progress Records
-- Sessions with task directories record detailed progress in `docs/progress/YYYY-M-D.md`.
+- Sessions with task directories record detailed progress in the task `docs/progress/YYYY-M-D.md`.
 - Root `docs/progress/YYYY-M-D.md` keeps only a short workspace-level summary: time, task name/path, and core result.
 - Before high-risk operations, update progress records and state the rollback plan.
 
@@ -120,35 +131,6 @@ tasks/*/try/**
         overwrite,
     )
     write_file(
-        root / "docs" / "project-map.md",
-        f"""# Project Map
-
-## Goal
-- `{name}` is a managed workspace for cross-session tasks, small projects, artifacts, and rules.
-
-## Directory Responsibilities
-- `AGENTS.md`: workspace rules.
-- `docs/task-index.md`: cross-session task index.
-- `docs/progress/`: workspace-level progress summaries, one file per completion date.
-- `docs/project-map.md`: long-lived workspace information.
-{"- `skills/`: common skills for a specialized task-type workspace; empty at creation time." if workspace_kind == "specialized" else "- General multi-task workspaces do not create `skills/` by default. Add it later only when converting to a specialized task-type workspace."}
-- `tasks/`: small project directories.
-- `output/`: historical or workspace-level deliverables.
-- `try/`: workspace-level test, debugging, and temporary validation files.
-
-## Workspace Kind
-- {workspace_kind}
-
-## Environment Ledger
-- `.env`: real sensitive local configuration, ignored and never committed.
-- `.env.example`: variable names and placeholder notes.
-
-## Created
-- {stamp}
-""",
-        overwrite,
-    )
-    write_file(
         root / "docs" / "task-index.md",
         """# Task Index
 
@@ -171,7 +153,7 @@ Use this file to answer: which cross-session tasks exist, where they are, what t
 
 ## {stamp} ~ {stamp}
 - Completed: created the standard managed workspace structure.
-- Added/modified/generated files and purpose: `AGENTS.md`, `.gitignore`, `.env.example`, `docs/`, {"`skills/`, " if workspace_kind == "specialized" else ""}`tasks/`, `output/`, `try/`.
+- Added/modified/generated files and purpose: `AGENTS.md`, `.gitignore`, `.env.example`, `docs/task-index.md`, `docs/progress/`, {"`skills/`, " if workspace_kind == "specialized" else ""}`tasks/`, `output/`, `try/`.
 - Errors: none.
 """,
         overwrite,
@@ -180,7 +162,7 @@ Use this file to answer: which cross-session tasks exist, where they are, what t
         root / "tasks" / "README.md",
         """# tasks
 
-Each small project uses `YYYYMMDD-short-task-name/` and contains `README.md`, `docs/project-map.md`, `docs/progress/`, `input/`, `work/`, `output/`, and `try/`.
+Each small project uses `YYYYMMDD-short-task-name/` and contains `README.md`, `docs/project-map.md`, `docs/acceptance-criteria.md`, `docs/progress/`, `input/`, `work/`, `output/`, and `try/`.
 """,
         overwrite,
     )
